@@ -1,17 +1,81 @@
-/*
-  NOT COMPLETED DO NOT PUSH TO REPO
-*/
-
 pub enum Colourize {
   Black,
-  White,
   Red,
-  Yellow,
   Green,
+  Yellow,
+  Blue,
+  Magenta,
+  Cyan,
+  White,
+  Gray,
+  BrightRed,
+  BrightGreen,
+  BrightYellow,
+  BrightBlue,
+  BrightMagenta,
+  BrightCyan,
+  BrightWhite,
+  RESET,
+  BgBlack,
+  BgRed,
+  BgGreen,
+  BgYellow,
+  BgBlue,
+  BgMagenta,
+  BgCyan,
+  BgWhite,
+  BgGray,
+  BgBrightRed,
+  BgBrightGreen,
+  BgBrightYellow,
+  BgBrightBlue,
+  BgBrightMagenta,
+  BgBrightCyan,
+  BgBrightWhite,
+}
+
+impl std::fmt::Display for Colourize {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match &self {
+      Colourize::Black => return write!(f, "\x1b[{}m", 30),
+      Colourize::Red => return write!(f, "\x1b[{}m", 31),
+      Colourize::Green => return write!(f, "\x1b[{}m", 32),
+      Colourize::Yellow => return write!(f, "\x1b[{}m", 33),
+      Colourize::Blue => return write!(f, "\x1b[{}m", 34),
+      Colourize::Magenta => return write!(f, "\x1b[{}m", 35),
+      Colourize::Cyan => return write!(f, "\x1b[{}m", 36),
+      Colourize::White => return write!(f, "\x1b[{}m", 37),
+      Colourize::Gray => return write!(f, "\x1b[{}m", 90),
+      Colourize::BrightRed => return write!(f, "\x1b[{}m", 91),
+      Colourize::BrightGreen => return write!(f, "\x1b[{}m", 92),
+      Colourize::BrightYellow => return write!(f, "\x1b[{}m", 93),
+      Colourize::BrightBlue => return write!(f, "\x1b[{}m", 94),
+      Colourize::BrightMagenta => return write!(f, "\x1b[{}m", 95),
+      Colourize::BrightCyan => return write!(f, "\x1b[{}m", 96),
+      Colourize::BrightWhite => return write!(f, "\x1b[{}m", 97),
+      Colourize::RESET => return write!(f, "\x1b[39;49m"),
+      Colourize::BgBlack => return write!(f, "\x1b[{}m", 40),
+      Colourize::BgRed => return write!(f, "\x1b[{}m", 41),
+      Colourize::BgGreen => return write!(f, "\x1b[{}m", 42),
+      Colourize::BgYellow => return write!(f, "\x1b[{}m", 43),
+      Colourize::BgBlue => return write!(f, "\x1b[{}m", 44),
+      Colourize::BgMagenta => return write!(f, "\x1b[{}m", 45),
+      Colourize::BgCyan => return write!(f, "\x1b[{}m", 46),
+      Colourize::BgWhite => return write!(f, "\x1b[{}m", 47),
+      Colourize::BgGray => return write!(f, "\x1b[{}m", 100),
+      Colourize::BgBrightRed => return write!(f, "\x1b[{}m", 101),
+      Colourize::BgBrightGreen => return write!(f, "\x1b[{}m", 102),
+      Colourize::BgBrightYellow => return write!(f, "\x1b[{}m", 103),
+      Colourize::BgBrightBlue => return write!(f, "\x1b[{}m", 104),
+      Colourize::BgBrightMagenta => return write!(f, "\x1b[{}m", 105),
+      Colourize::BgBrightCyan => return write!(f, "\x1b[{}m", 106),
+      Colourize::BgBrightWhite => return write!(f, "\x1b[{}m", 107),
+    }
+  }
 }
 
 impl Colourize {
   pub fn from_rgb(foreground: bool, r: u8, g: u8, b: u8) -> String{
-    format!("\x1b[{};2;{r};{g};{b}m", foreground : if foreground { 38 } else { 48 })
+    format!("\x1b[{};2;{r};{g};{b}m", if foreground { 38 } else { 48 })
   }
 }

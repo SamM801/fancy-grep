@@ -1,11 +1,16 @@
 use fgrep::configuration::*;
+use fgrep::colourize::Colourize::{self, BgBrightWhite, Black, BrightRed, BgGray, RESET};
 use std::io::{prelude::*, BufReader};
 
 fn find_string_and_highlight(text: &String, term: &str) -> Option<String> {
   let mut highlighted = String::new();
   if let Some(index) = text.find(term) {
+
+    let middle_string = &text[index..index+term.len()];
+    let middle_string = format!("{}{middle_string}{RESET}", Colourize::from_rgb(true, 20, 180, 20));
+    
     highlighted.push_str(&text[..index]);
-    highlighted.push_str(&text[index..index+term.len()]);
+    highlighted.push_str(&middle_string[..]);
     highlighted.push_str(&text[index+term.len()..]);
     return Some(highlighted);
   }
@@ -33,23 +38,24 @@ fn main()  {
 
     Syntax:
       fgrep (File Path) (Search Term) [--regex, --minify]
+      At least, this is what it WILL be whenever i actually add flags and regular expression support lel
   */
   
   let config: Configuration;
   match Configuration::from_args() {
     Ok(cfg) => config = cfg,
     Err(ConfigurationError::NotEnoughArguments) => {
-      eprintln!("\x1B[38;2;220;40;40mThe program encountered an error!");
+      eprintln!("{BrightRed}The program encountered an error!");
       eprintln!("Too few arguments were supplied when calling this program!");
       eprintln!("\nHINT: you call fgrep with the following syntax:");
-      eprintln!("fgrep (File Path) (Search Term) [--regex, --decolor]\x1B[39;49m");
+      eprintln!("fgrep (File Path) (Search Term) [--regex, --decolor]{RESET}");
       return;
     },
     Err(ConfigurationError::FileNotFound(fname)) => {
-      eprintln!("\x1B[38;2;220;40;40mThe program encountered an error!");
+      eprintln!("{BrightRed}The program encountered an error!");
       eprintln!("Your file ({}) could not be found!", fname);
       eprintln!("\nHINT: check what directory you are calling");
-      eprintln!("me from, and use a relative path from there!\x1B[39;49m");
+      eprintln!("me from, and use a relative path from there!{RESET}");
       return;
     },
   }
@@ -62,19 +68,19 @@ fn main()  {
     if let Some(line) = find_string_and_highlight(&lines[ind], &config.search_term) {
       if let Some(linebefore) = lines.get(safe_subtract(ind, 1).unwrap_or(usize::MAX)) {
         if let Some(lineafter) = lines.get(ind+1) {
-          println!("{}{}| {}", ind, standard_spaces(&ind), linebefore);
-          println!("{}{}| {}\x1B[39;49m", ind+1, standard_spaces(&ind), line);
-          println!("{}{}| {}\n", ind+2, standard_spaces(&ind), lineafter);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}", ind, standard_spaces(&ind), linebefore);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}", ind+1, standard_spaces(&ind), line);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}\n", ind+2, standard_spaces(&ind), lineafter);
         } else {
-          println!("{}{}| {}", ind, standard_spaces(&ind), linebefore);
-          println!("{}{}| {}\x1B[39;49m\n", ind+1, standard_spaces(&ind), line);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}", ind, standard_spaces(&ind), linebefore);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}\n", ind+1, standard_spaces(&ind), line);
         }
       } else {
         if let Some(lineafter) = lines.get(ind+1) {
-          println!("{}{}| {}\x1B[39;49m", ind+1, standard_spaces(&ind), line);
-          println!("{}{}| {}\n", ind+2, standard_spaces(&ind), lineafter);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}", ind+1, standard_spaces(&ind), line);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}\n", ind+2, standard_spaces(&ind), lineafter);
         } else {
-          println!("{}{}| {}\x1B[39;49m\n", ind+1, standard_spaces(&ind), line);
+          println!("{BgBrightWhite}{Black}{}{}{BgGray} {RESET} {}\n", ind+1, standard_spaces(&ind), line);
         }
       }
     } else {
