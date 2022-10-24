@@ -3,10 +3,27 @@ use std::io::{prelude::*, BufReader};
 
 fn find_string_and_highlight(text: &String, term: &str) -> Option<String> {
   let mut highlighted = String::new();
-  while let Some(index) = text.find(term) {
-    highlighted.push_str(&text[]);
+  if let Some(index) = text.find(term) {
+    highlighted.push_str(&text[..index]);
+    highlighted.push_str(&text[index..index+term.len()]);
+    highlighted.push_str(&text[index+term.len()..]);
+    return Some(highlighted);
   }
-  Some(highlighted)
+  None
+}
+
+fn safe_subtract(n1: usize, n2: usize) -> Option<usize> {
+  if n1 == 0 {
+    return None;
+  }
+  Some((n1-n2) as usize) 
+}
+
+fn standard_spaces(line_nr: &usize) -> String {
+  let mut line_nr = line_nr.to_owned() as f64;
+  line_nr = 1.0 + line_nr.log10().floor();
+  if line_nr == f64::NEG_INFINITY { line_nr = 1.0; }
+  " ".repeat( ( ( ( line_nr / 4.0 ).floor() * 4.0 ) + 4.0 - line_nr) as usize )
 }
 
 fn main()  {
@@ -43,7 +60,24 @@ fn main()  {
   let lines = BufReader::new(config.file).lines().map(|l| l.unwrap_or(String::new())).collect::<Vec<String>>(); // TURBOFISH SYNTAX :O
   for ind in 0..lines.len() {
     if let Some(line) = find_string_and_highlight(&lines[ind], &config.search_term) {
-      println!("{}\t| {line}", ind+1);
+      if let Some(linebefore) = lines.get(safe_subtract(ind, 1).unwrap_or(usize::MAX)) {
+        if let Some(lineafter) = lines.get(ind+1) {
+          println!("{}{}| {}", ind, standard_spaces(&ind), linebefore);
+          println!("{}{}| {}\x1B[39;49m", ind+1, standard_spaces(&ind), line);
+          println!("{}{}| {}\n", ind+2, standard_spaces(&ind), lineafter);
+        } else {
+          println!("{}{}| {}", ind, standard_spaces(&ind), linebefore);
+          println!("{}{}| {}\x1B[39;49m\n", ind+1, standard_spaces(&ind), line);
+        }
+      } else {
+        if let Some(lineafter) = lines.get(ind+1) {
+          println!("{}{}| {}\x1B[39;49m", ind+1, standard_spaces(&ind), line);
+          println!("{}{}| {}\n", ind+2, standard_spaces(&ind), lineafter);
+        } else {
+          println!("{}{}| {}\x1B[39;49m\n", ind+1, standard_spaces(&ind), line);
+        }
+      }
+    } else {
     }
   }
 }
