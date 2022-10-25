@@ -2,6 +2,11 @@ use fgrep::configuration::*;
 use fgrep::colourize::Colourize::{self, BgBrightWhite, Black, BrightRed, BgGray, RESET};
 use std::io::{prelude::*, BufReader};
 
+/*
+  TODO
+  - (Extended from configuration.rs) remove some of the logic from main() and abstract it to a new struct to clean things up
+*/
+
 fn find_string_and_highlight(text: &String, term: &str) -> Option<String> {
   let mut highlighted = String::new();
   if let Some(index) = text.find(term) {
