@@ -1,6 +1,15 @@
 use std::fs;
 use std::env::args;
 
+/*
+  TODO
+  - Make the Configuration struct have a full fledged argument parser,
+    to allow for flags.
+  - Pass some of the logic of from_args into a new struct named CLInstance,
+    which will handle the file opening, highlighting, and the rest of finding logic
+    in the program.
+*/
+
 pub struct Configuration {
   pub file: fs::File,
   pub fname: String,
